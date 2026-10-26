@@ -1,3 +1,4 @@
+import { JourneyPreview } from "../components/NotebookJourney";
 import { navigate } from "../utils/nav";
 import { useSave } from "../utils/storage";
 import { useEasternToday } from "../hooks/useToday";
@@ -31,7 +32,7 @@ export function Menu() {
           </h1>
           <p className="hero-description">
             Seven prompts. Twenty seconds. Think past the obvious — the rarer
-            your answer, the bigger your score.
+            your answer, the farther you fly. A whole world is hiding in the margins.
           </p>
           <div className="hero-action">
             <button
@@ -58,48 +59,7 @@ export function Menu() {
             </p>
           )}
         </div>
-        <div
-          className="word-art"
-          aria-label="Example: name a shade of blue. Navy earns 24 points. Zaffre earns 100 points."
-        >
-          <div className="art-orbit" />
-          <span className="art-spark spark-one" aria-hidden="true">
-            ✳
-          </span>
-          <div className="prompt-slip">
-            <span>LET’S SAY THE PROMPT IS…</span>
-            <p>
-              A shade
-              <br />
-              of blue.
-            </p>
-            <span className="slip-rule">THINK A LITTLE SIDEWAYS ↴</span>
-          </div>
-          <div className="word-ticket common-ticket">
-            <div>
-              <span>A GOOD ANSWER</span>
-              <strong>Navy</strong>
-            </div>
-            <b>
-              24<small>PTS</small>
-            </b>
-          </div>
-          <div className="word-ticket rare-ticket">
-            <div>
-              <span>AN ODDWORD ANSWER</span>
-              <strong>
-                Zaffre
-                <span className="ticket-star" aria-hidden="true">
-                  ✳
-                </span>
-              </strong>
-            </div>
-            <b>
-              100<small>PTS</small>
-            </b>
-          </div>
-          <p className="art-caption">You had that tucked away somewhere.</p>
-        </div>
+        <JourneyPreview />
       </section>
       <section className="how-strip" aria-label="How to play">
         <div>
@@ -117,8 +77,8 @@ export function Menu() {
         <div>
           <span>03</span>
           <p>
-            Meet the ones you missed.
-            <small>Every answer, revealed at the end.</small>
+            See how far you fly.
+            <small>New doodles along the way. Every answer at the end.</small>
           </p>
         </div>
       </section>

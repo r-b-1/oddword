@@ -30,6 +30,12 @@ try {
   const { ResultScreen } = await vite.ssrLoadModule(
     "/src/components/ResultScreen.tsx",
   );
+  const { NotebookJourney } = await vite.ssrLoadModule(
+    "/src/components/NotebookJourney.tsx",
+  );
+  const { journeyAt, JOURNEY_STOPS } = await vite.ssrLoadModule(
+    "/src/utils/journey.ts",
+  );
   const { matchAnswer, formatResult } = await vite.ssrLoadModule(
     "/src/utils/scoring.ts",
   );
@@ -106,6 +112,24 @@ try {
     depth: 0,
     kind: "miss",
   };
+
+  // The world moves in proportion to earned points, including partial milestones.
+  assert.equal(journeyAt(75).offset, journeyAt(25).offset * 3);
+  assert.equal(journeyAt(99).next.points, 100);
+  for (const stop of JOURNEY_STOPS) {
+    assert.equal(journeyAt(stop.points).stop.name, stop.name);
+    if (stop.points > 0) {
+      assert.notEqual(journeyAt(stop.points - 1).stop.name, stop.name);
+    }
+    const scene = render(NotebookJourney, { points: stop.points, finished: true });
+    assert.ok(scene.includes(`aria-valuenow="${stop.points}"`));
+    assert.ok(scene.includes(escape(stop.note)));
+  }
+  assert.equal(journeyAt(700).next, null);
+  assert.equal(journeyAt(900).score, 700);
+  assert.equal(journeyAt(-10).score, 0);
+  assert.equal(journeyAt(NaN).score, 0);
+
   const review = render(AnswerReview, { catches });
   assert.ok(review.includes("Time ran out"));
   assert.ok(review.includes("Skipped"));
@@ -123,6 +147,16 @@ try {
       `${mode}: answers leaked before completion`,
     );
     const result = render(ResultScreen, { mode, catches });
+    const earned = catches.reduce((sum, entry) => sum + entry.points, 0);
+    assert.ok(result.includes(`aria-valuenow="${earned}"`), `${mode}: final journey score`);
+    const resumed = render(DiveBoard, {
+      mode, questions, initialCatches: catches.slice(0, 3), onComplete() {},
+    });
+    assert.ok(
+      resumed.includes(`aria-valuenow="${catches[0].points}"`),
+      `${mode}: resumed journey must count points and ignore skips/timeouts`,
+    );
+    assert.ok(!resumed.includes("answer-review"));
     assert.ok(result.includes("The ones you could’ve picked."));
     assert.equal((result.match(/class="review-question"/g) ?? []).length, 7);
   }
@@ -160,7 +194,7 @@ try {
   );
   assert.ok(values.has("krillion-clone-v1"));
   console.log(
-    `Passed: ${QUESTION_BANK.length} answer lists, ranking, selected answers, skips, timeouts, missing prompts, all three result modes, pre-game answer hiding, share branding, and legacy save migration.`,
+    `Passed: ${QUESTION_BANK.length} answer lists, ranking, selected answers, skips, timeouts, missing prompts, all three result modes, pre-game answer hiding, share branding, legacy save migration, journey milestones, proportional movement, resumed scores, and final expeditions.`,
   );
 } finally {
   await vite.close();

@@ -1,0 +1,283 @@
+/* Folded paper, blue ruling, and pencil marks. The world moves with the score. */
+body {
+  background-image:
+    linear-gradient(119deg, transparent 24%, oklch(75% 0.025 85 / 0.045) 24.2%, transparent 24.8%),
+    linear-gradient(31deg, transparent 65%, oklch(99% 0.01 85 / 0.65) 65.2%, transparent 66%),
+    linear-gradient(166deg, transparent 42%, oklch(70% 0.02 85 / 0.05) 42.3%, transparent 43%);
+  background-size: 640px 780px, 780px 960px, 1100px 820px;
+}
+.notebook-journey {
+  --pencil: oklch(40% 0.027 107);
+  position: relative;
+  min-width: 0;
+  text-align: left;
+  color: var(--pencil);
+  background: oklch(97% 0.02 91);
+  border: 1px solid oklch(78% 0.027 91);
+  border-radius: 3px 9px 4px 7px / 8px 3px 7px 4px;
+  box-shadow: 3px 5px 0 oklch(88% 0.025 91), 4px 6px 0 oklch(75% 0.025 91);
+  isolation: isolate;
+}
+.notebook-journey::before {
+  content: "";
+  position: absolute;
+  z-index: 3;
+  width: 110px;
+  height: 26px;
+  left: calc(50% - 55px);
+  top: -14px;
+  transform: rotate(-3deg);
+  background: oklch(86% 0.045 86 / 0.7);
+  clip-path: polygon(2% 4%, 98% 0, 96% 19%, 100% 32%, 97% 55%, 99% 100%, 1% 95%, 3% 72%, 0 54%, 3% 31%);
+}
+.journey-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding: 22px 24px 12px;
+}
+.journey-heading .eyebrow {
+  font-size: 9px;
+  letter-spacing: 0.16em;
+}
+.journey-score {
+  font-size: 11px;
+  white-space: nowrap;
+}
+.journey-score strong {
+  font-family: var(--display);
+  font-size: 28px;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -1px;
+  margin-right: 3px;
+}
+.journey-window {
+  position: relative;
+  overflow: hidden;
+  border-block: 1px solid oklch(83% 0.03 91);
+  background:
+    linear-gradient(33deg, transparent 44.5%, oklch(73% 0.03 85 / 0.07) 45%, oklch(99% 0.02 85 / 0.4) 46%, transparent 46.7%),
+    linear-gradient(148deg, transparent 55%, oklch(73% 0.03 85 / 0.08) 55.3%, transparent 56%),
+    linear-gradient(82deg, transparent 36%, oklch(72% 0.02 85 / 0.06) 36.3%, oklch(99% 0.02 85 / 0.5) 37%, transparent 38%);
+}
+.journey-window::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: url("/paper-grain.svg");
+  opacity: 0.19;
+  mix-blend-mode: multiply;
+}
+.journey-scene {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.journey-world {
+  transition: transform 1.8s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.journey-plane-position {
+  transition: transform 1.8s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.journey-launch {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: paper-launch 1.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.journey-ruler-label {
+  fill: var(--pencil);
+  font: 12px var(--display);
+}
+.journey-start-note {
+  font-family: var(--display);
+  font-size: 14px;
+  fill: var(--pencil);
+}
+.journey-page-number {
+  position: absolute;
+  bottom: 12px;
+  right: 16px;
+  font-size: 8px;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+  background: oklch(97% 0.02 91 / 0.85);
+  padding: 4px 6px;
+}
+.journey-gain {
+  position: absolute;
+  top: 12%;
+  left: 50%;
+  white-space: nowrap;
+  padding: 7px 12px;
+  font-family: var(--display);
+  font-size: 17px;
+  background: oklch(88% 0.09 68);
+  border: 1px solid oklch(55% 0.08 55);
+  border-radius: 2px 7px 3px 6px;
+  transform: translateX(-50%) rotate(-5deg);
+  animation: journey-gain 2.6s ease-out both;
+}
+.journey-caption {
+  padding: 18px 24px 14px;
+}
+.journey-location {
+  display: block;
+  font-family: var(--display);
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.8px;
+}
+.journey-caption p {
+  font-size: 11px;
+  line-height: 1.6;
+  margin-top: 5px;
+}
+.journey-route {
+  display: flex;
+  gap: 8px;
+  margin: 0 24px 22px;
+}
+.journey-route span {
+  flex: 1;
+  height: 5px;
+  background: oklch(86% 0.03 91);
+  border-radius: 30% 40% 35% 20%;
+}
+.journey-route .reached {
+  background: var(--green);
+}
+.journey-preview {
+  width: 100%;
+  max-width: 450px;
+  justify-self: end;
+  padding-top: 16px;
+}
+.journey-preview .notebook-journey {
+  transform: rotate(2deg);
+}
+.journey-demo .journey-scene {
+  max-height: 310px;
+}
+.journey-demo-button {
+  display: block;
+  margin: 20px auto 0;
+  padding: 12px 16px;
+  background: transparent;
+  border: 0;
+  font-family: var(--display);
+  font-size: 16px;
+  text-decoration: underline;
+  text-decoration-style: dashed;
+  text-underline-offset: 7px;
+}
+.journey-demo-button:hover {
+  color: var(--green);
+}
+.journey-demo-note {
+  font-size: 9px;
+  line-height: 1.6;
+  text-align: center;
+  color: var(--muted);
+  padding: 0 16px;
+}
+.menu-hero:has(.journey-preview) {
+  gap: 48px;
+  padding-top: 28px;
+}
+.game-container,
+.game-intro-layout {
+  max-width: 1100px;
+  display: grid;
+  grid-template-columns: minmax(280px, 0.85fr) minmax(0, 1.15fr);
+  align-items: start;
+  gap: 48px;
+  margin: 48px auto 0;
+}
+.game-container > .notebook-journey,
+.game-intro-layout > .notebook-journey {
+  position: sticky;
+  top: 28px;
+}
+.notebook-sheet {
+  background:
+    linear-gradient(90deg, transparent 23px, oklch(70% 0.1 25 / 0.2) 23px, oklch(70% 0.1 25 / 0.2) 24px, transparent 24px),
+    repeating-linear-gradient(transparent 0 31px, oklch(70% 0.05 230 / 0.13) 31px 32px),
+    oklch(98% 0.014 91);
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  padding: 32px 32px 36px 44px;
+  box-shadow: 3px 4px 0 oklch(90% 0.02 91);
+}
+.play-sheet {
+  min-width: 0;
+}
+.play-sheet .game-header {
+  text-align: left;
+}
+.play-sheet .question-text {
+  font-size: 36px;
+}
+.play-sheet .game-subtitle {
+  font-size: 11px;
+}
+.play-sheet .game-mode-badge {
+  padding: 0;
+  border: 0;
+}
+.play-sheet .pips {
+  margin: 20px 0;
+}
+.game-intro-layout .intro-panel {
+  margin: 0;
+  text-align: left;
+  max-width: none;
+}
+.game-intro-layout .intro-panel > p:not(.game-mode-badge) {
+  font-size: 14px;
+}
+.result-journey {
+  max-width: 460px;
+  margin: 36px auto 32px;
+}
+.result-journey .journey-scene {
+  max-height: 240px;
+}
+@keyframes paper-launch {
+  0% { transform: rotate(0deg) translateY(0); }
+  25% { transform: rotate(-12deg) translateY(-18px); }
+  100% { transform: rotate(0deg) translateY(0); }
+}
+@keyframes journey-gain {
+  0% { opacity: 0; transform: translate(-50%, 12px) rotate(-5deg); }
+  15%, 75% { opacity: 1; transform: translate(-50%, 0) rotate(-5deg); }
+  100% { opacity: 0; transform: translate(-50%, -12px) rotate(-5deg); }
+}
+@media (max-width: 1000px) {
+  .game-container, .game-intro-layout { gap: 24px; }
+  .notebook-sheet { padding: 24px 24px 28px 36px; }
+  .menu-hero:has(.journey-preview) { gap: 24px; }
+  .play-sheet .question-text { font-size: 30px; }
+}
+@media (max-width: 760px) {
+  .journey-preview { justify-self: center; max-width: 430px; margin-top: 20px; }
+  .game-container, .game-intro-layout { grid-template-columns: minmax(0, 1fr); gap: 24px; margin-top: 28px; }
+  .game-container > .notebook-journey, .game-intro-layout > .notebook-journey { position: relative; top: auto; }
+  .game-container .journey-heading, .game-intro-layout .journey-heading { padding: 10px 16px 6px; }
+  .game-container .journey-scene, .game-intro-layout .journey-scene { height: 170px; }
+  .game-container .journey-caption, .game-intro-layout .journey-caption { padding: 10px 16px; display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+  .game-container .journey-location, .game-intro-layout .journey-location { font-size: 21px; }
+  .game-container .journey-caption p, .game-intro-layout .journey-caption p { font-size: 10px; text-align: right; margin: 0; }
+  .game-container .journey-route, .game-intro-layout .journey-route { margin: 0 16px 12px; }
+  .game-container .journey-score strong, .game-intro-layout .journey-score strong { font-size: 23px; }
+  .journey-gain { font-size: 13px; }
+  .notebook-sheet { padding: 24px 20px 28px 32px; }
+  .play-sheet .question-card { padding: 20px 0; }
+  .play-sheet .game-header .game-title { font-size: 24px; }
+  .play-sheet .question-text { font-size: 30px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .journey-world, .journey-plane-position { transition: none; }
+  .journey-launch, .journey-gain { animation: none; }
+}

@@ -23,12 +23,16 @@ The answer bank is finite and scores are curated, not calculated from live playe
 
 ## Design
 
-Original warm-paper puzzle-club identity, orange accents, typographic word tickets, and an asterisk mark. Bricolage Grotesque and Manrope are loaded from Google Fonts, with sans-serif fallbacks. The design context is recorded in `.impeccable.md`.
+An original notebook adventure: blue ruling, pencil doodles, paper creases, folded mountains, an orange paper-plane character, and the Oddword asterisk mark. Your plane climbs in proportion to earned points; every 100 points reveals a new landmark, from the doodle garden to stars and finally “Off the page” at 700. Skips and timeouts add no travel. Saved games restore the journey from their score, and results retain the final destination. The home-page test flight is an isolated demo and never changes saved scores.
+
+The journey sits beside the prompt on desktop and becomes a compact scene above it on mobile. Reduced-motion preferences disable travel and launch animations while keeping score and destination updates. Original vector artwork and paper texture are local assets. Bricolage Grotesque and Manrope are loaded from Google Fonts, with sans-serif fallbacks. The design context is recorded in `.impeccable.md`.
 
 ## Code
 
 - `src/data/mockQuestions.ts`: questions, accepted answers, aliases, and scores.
 - `src/components/AnswerReview.tsx`: shared post-game and archive answer review.
+- `src/components/NotebookJourney.tsx`: scrolling scenery, paper-plane character, and interactive home-page demo.
+- `src/utils/journey.ts`: score-to-position mapping and notebook landmarks.
 - `src/hooks/useDive.ts`: game phases, timers, and answer handling.
 - `src/utils/scoring.ts`: answer matching and share text.
 - `src/utils/storage.ts`: local progress, settings, and stats.

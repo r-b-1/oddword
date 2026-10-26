@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import type { Catch } from "../types/game";
 import { AnswerReview } from "./AnswerReview";
+import { NotebookJourney } from "./NotebookJourney";
 import { formatCountdown, nextEasternMidnight } from "../utils/date";
 import { navigate } from "../utils/nav";
 import { formatResult, totalPoints } from "../utils/scoring";
@@ -77,6 +78,9 @@ export function ResultScreen({
         {catches.length} answers found{date ? ` · ${date}` : ""}
       </p>
       <p className="input-hint">Played by {save.settings.character}</p>
+      <div className="result-journey">
+        <NotebookJourney points={points} finished />
+      </div>
 
       <dl className="logbook">
         <div>

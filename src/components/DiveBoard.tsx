@@ -1,8 +1,8 @@
 import type { Catch, Question } from "../types/game";
 import { TIER_CONFIG } from "../types/game";
 import { useDive } from "../hooks/useDive";
-import { normalizeAnswer } from "../utils/scoring";
-import { DepthMeter } from "./DepthMeter";
+import { normalizeAnswer, totalPoints } from "../utils/scoring";
+import { NotebookJourney } from "./NotebookJourney";
 import { Timer } from "./Timer";
 import { QuestionCard } from "./QuestionCard";
 import { AnswerInput } from "./AnswerInput";
@@ -38,20 +38,23 @@ export function DiveBoard({
 
   if (dive.phase === "intro") {
     return (
-      <section className="intro-panel">
-        <p className="game-mode-badge">{MODE_LABEL[mode]}</p>
-        <h1 className="game-title">Let’s play</h1>
-        {dateLabel ? <p className="game-subtitle">{dateLabel}</p> : null}
-        <p>
-          Seven prompts. Three seconds to read each one, then twenty seconds to
-          answer. If a guess isn’t on the list, try another while the clock
-          runs. Rarer answers earn more points. See every accepted answer when
-          you finish.
-        </p>
-        <button className="btn btn-primary" type="button" onClick={dive.begin}>
-          Let’s play
-        </button>
-      </section>
+      <div className="game-intro-layout">
+        <NotebookJourney points={0} />
+        <section className="intro-panel notebook-sheet">
+          <p className="game-mode-badge">{MODE_LABEL[mode]}</p>
+          <h1 className="game-title">Let your mind wander.</h1>
+          {dateLabel ? <p className="game-subtitle">{dateLabel}</p> : null}
+          <p>
+            Seven prompts. Three seconds to read each one, then twenty seconds to
+            answer. If a guess isn’t on the list, try another while the clock
+            runs. Rarer answers earn more points and fly your paper plane farther up the notebook. See every accepted answer when
+            you finish.
+          </p>
+          <button className="btn btn-primary" type="button" onClick={dive.begin}>
+            Let’s play
+          </button>
+        </section>
+      </div>
     );
   }
 
@@ -65,118 +68,123 @@ export function DiveBoard({
 
   return (
     <div className="game-container">
-      <div className="game-header">
-        <p className="game-mode-badge">{MODE_LABEL[mode]}</p>
-        <h1 className="game-title">
-          Prompt {dive.index + 1} of {questions.length}
-        </h1>
-        {dateLabel ? (
-          <p className="game-subtitle">{dateLabel}</p>
-        ) : (
-          <p className="game-subtitle">A fresh sheet of seven</p>
-        )}
-      </div>
-
-      <div className="pips" aria-hidden="true">
-        {questions.map((question, pip) => {
-          const state =
-            pip < dive.catches.length
-              ? "done"
-              : pip === dive.index
-                ? "now"
-                : "";
-          return <span key={question.id} className={`pip ${state}`} />;
-        })}
-      </div>
-
-      <DepthMeter depth={dive.depth} />
-
-      {dive.phase === "preview" || dive.phase === "answering" ? (
-        <Timer
-          seconds={dive.secondsLeft}
-          label={dive.phase === "preview" ? "Preview" : "Time"}
-          warning={dive.phase === "answering" && dive.secondsLeft <= 5}
-        />
-      ) : null}
-
-      <QuestionCard
-        question={dive.question}
-        index={dive.index}
-        total={questions.length}
+      <NotebookJourney
+        points={totalPoints(dive.catches)}
+        gain={verdict?.points ?? 0}
+        turn={dive.catches.length}
       />
-
-      {dive.phase === "preview" ? (
-        <div className="phase-note">
-          <p>A moment to think. Make it an unexpected one.</p>
-          <button
-            className="btn btn-primary"
-            type="button"
-            onClick={dive.skipPreview}
-          >
-            Start answering
-          </button>
-        </div>
-      ) : null}
-
-      {dive.phase === "answering" ? (
-        <>
-          <AnswerInput
-            value={dive.draft}
-            onChange={dive.changeDraft}
-            onSubmit={dive.submit}
-            status={dive.feedback ? "incorrect" : "idle"}
-          />
-          {dive.feedback === "nothing" ? (
-            <div className="answer-result incorrect" role="status">
-              Not on this game’s list. Try another.
-            </div>
-          ) : null}
-          <button
-            className="btn btn-ghost btn-full"
-            type="button"
-            onClick={dive.skip}
-          >
-            Skip this prompt
-          </button>
-        </>
-      ) : null}
-
-      {dive.phase === "verdict" && verdict ? (
-        <div
-          className={`verdict ${verdict.kind === "catch" ? "correct" : "incorrect"}`}
-          role="status"
-        >
-          {verdict.kind === "catch" && tier ? (
-            <>
-              <p className={`verdict-kicker tier-${verdict.tier}`}>
-                {tier.emoji} {tier.name}
-              </p>
-              <p className="verdict-answer">{verdict.matchedText}</p>
-              {showTyped ? (
-                <p className="input-hint">You entered “{verdict.submitted}”</p>
-              ) : null}
-              <p className="verdict-score">+{verdict.points} points</p>
-              <p className="input-hint">{tier.description}</p>
-            </>
+      <section className="play-sheet notebook-sheet" aria-label="Current prompt">
+        <div className="game-header">
+          <p className="game-mode-badge">{MODE_LABEL[mode]}</p>
+          <h1 className="game-title">
+            Prompt {dive.index + 1} of {questions.length}
+          </h1>
+          {dateLabel ? (
+            <p className="game-subtitle">{dateLabel}</p>
           ) : (
-            <>
-              <p className="verdict-kicker">
-                {verdict.kind === "timeout"
-                  ? "The clock beat you to it"
-                  : "Skipped"}
-              </p>
-              <p className="verdict-score">0 pts</p>
-            </>
+            <p className="game-subtitle">A fresh sheet of seven</p>
           )}
-          <button
-            className="btn btn-primary btn-full"
-            type="button"
-            onClick={dive.descend}
-          >
-            {dive.isLast ? "See results & answers" : "Next prompt"}
-          </button>
         </div>
-      ) : null}
+
+        <div className="pips" aria-hidden="true">
+          {questions.map((question, pip) => {
+            const state =
+              pip < dive.catches.length
+                ? "done"
+                : pip === dive.index
+                  ? "now"
+                  : "";
+            return <span key={question.id} className={`pip ${state}`} />;
+          })}
+        </div>
+
+        {dive.phase === "preview" || dive.phase === "answering" ? (
+          <Timer
+            seconds={dive.secondsLeft}
+            label={dive.phase === "preview" ? "Preview" : "Time"}
+            warning={dive.phase === "answering" && dive.secondsLeft <= 5}
+          />
+        ) : null}
+
+        <QuestionCard
+          question={dive.question}
+          index={dive.index}
+          total={questions.length}
+        />
+
+        {dive.phase === "preview" ? (
+          <div className="phase-note">
+            <p>A moment to think. Make it an unexpected one.</p>
+            <button
+              className="btn btn-primary"
+              type="button"
+              onClick={dive.skipPreview}
+            >
+              Start answering
+            </button>
+          </div>
+        ) : null}
+
+        {dive.phase === "answering" ? (
+          <>
+            <AnswerInput
+              value={dive.draft}
+              onChange={dive.changeDraft}
+              onSubmit={dive.submit}
+              status={dive.feedback ? "incorrect" : "idle"}
+            />
+            {dive.feedback === "nothing" ? (
+              <div className="answer-result incorrect" role="status">
+                Not on this game’s list. Try another.
+              </div>
+            ) : null}
+            <button
+              className="btn btn-ghost btn-full"
+              type="button"
+              onClick={dive.skip}
+            >
+              Skip this prompt
+            </button>
+          </>
+        ) : null}
+
+        {dive.phase === "verdict" && verdict ? (
+          <div
+            className={`verdict ${verdict.kind === "catch" ? "correct" : "incorrect"}`}
+            role="status"
+          >
+            {verdict.kind === "catch" && tier ? (
+              <>
+                <p className={`verdict-kicker tier-${verdict.tier}`}>
+                  {tier.emoji} {tier.name}
+                </p>
+                <p className="verdict-answer">{verdict.matchedText}</p>
+                {showTyped ? (
+                  <p className="input-hint">You entered “{verdict.submitted}”</p>
+                ) : null}
+                <p className="verdict-score">+{verdict.points} points</p>
+                <p className="input-hint">{tier.description}</p>
+              </>
+            ) : (
+              <>
+                <p className="verdict-kicker">
+                  {verdict.kind === "timeout"
+                    ? "The clock beat you to it"
+                    : "Skipped"}
+                </p>
+                <p className="verdict-score">0 pts</p>
+              </>
+            )}
+            <button
+              className="btn btn-primary btn-full"
+              type="button"
+              onClick={dive.descend}
+            >
+              {dive.isLast ? "See results & answers" : "Next prompt"}
+            </button>
+          </div>
+        ) : null}
+      </section>
     </div>
   );
 }
